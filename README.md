@@ -1,13 +1,13 @@
 # MyReads Project
 
-#Description:
+# Description:
 My Reads project contains a shelf,which is based on your own choice of books,there are three shelves available,
 1.Currently Reading
 2.Want to Read
 3.Read.
 You can also search for books from another page.
 
-#Instruction for installing and launching:
+# Instruction for installing and launching:
 1.fork my github repository,
 2.Clone it to your local disk then,
 3.Now open the cloned location with bash/command Prompt and write 'Yarn start/npm start'
