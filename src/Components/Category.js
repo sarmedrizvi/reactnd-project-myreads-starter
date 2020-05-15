@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { getAll, update } from "../BooksAPI";
 
 class BooksApp extends React.Component {
- 
   state = {
     /**
      * TODO: Instead of using this state variable to keep track of which page
@@ -16,26 +15,50 @@ class BooksApp extends React.Component {
     currentlyReading: [],
     wantToRead: [],
     read: [],
+    allBooks: [],
   };
   selectChange = (value, book) => {
     this.setState({ selectedOption: value.target.value }, () => {
       // console.log(this.state.selectedOption);
-      update(book, this.state.selectedOption).then((res) => {
-        this.getAllBooks();
+      const { allBooks, selectedOption } = this.state;
+      this.setState(
+        {
+          allBooks: allBooks.map((oldBook) =>
+            oldBook.id === book.id
+              ? { ...oldBook, shelf: selectedOption }
+              : oldBook
+          ),
+        },
+        () => {
+          this.filterBooks(this.state.allBooks);
+        }
+      );
+      update(book, this.state.selectedOption).catch((err) => {
+        return <h1>{err}</h1>;
       });
     });
   };
   getAllBooks = () => {
     getAll().then((res) => {
-      this.setState({
-        currentlyReading: res.filter(
-          (book) => book.shelf === "currentlyReading"
-        ),
-        wantToRead: res.filter((book) => book.shelf === "wantToRead"),
-        read: res.filter((book) => book.shelf === "read"),
-      });
+      this.setState(
+        {
+          allBooks: res,
+        },
+        () => {
+          this.filterBooks(this.state.allBooks);
+        }
+      );
       // this.props.getBook(res);
       // console.log(res)
+    });
+  };
+  filterBooks = (newBooks) => {
+    this.setState({
+      currentlyReading: newBooks.filter(
+        (book) => book.shelf === "currentlyReading"
+      ),
+      wantToRead: newBooks.filter((book) => book.shelf === "wantToRead"),
+      read: newBooks.filter((book) => book.shelf === "read"),
     });
   };
   componentDidMount() {
